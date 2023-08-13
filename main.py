@@ -6,6 +6,7 @@ from reportlab.lib.units import inch
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from io import BytesIO
 import matplotlib.pyplot as plt
+import numpy as np
 
 app = Flask(__name__)
 
@@ -30,20 +31,43 @@ def generate_pdf():
     cell_width = (available_width - 23) / 2  # Divide by 2 for 2 columns
     cell_height = (available_height - 3 * inch) / len(data)
 
+    # Calculate row heights to cover the whole canvas with 23px margin
+    row_height = (available_height - 23 * 2) / len(data)
+
     # Create a table with the data and adjusted cell dimensions
     table_data = []
     for i in range(len(data)):
-        fig, ax = plt.subplots()
-        ax.plot([1, 2, 3, 4], [i * 10 + 10, i * 10 + 20, i * 10 + 15, i * 10 + 5])
-        canvas = FigureCanvas(fig)
-        buffer = BytesIO()
-        canvas.print_png(buffer)
-        plt.close(fig)
-        image = Image(buffer, width=cell_width, height=cell_height)
-        empty_cell = Spacer(width=cell_width, height=cell_height)  # Empty cell
-        table_data.append([image, empty_cell])
+        # Create a radar plot
+        angles = np.linspace(0, 2 * np.pi, 5, endpoint=False)
+        values = [i * 10 + 10, i * 10 + 20, i * 10 + 15, i * 10 + 5, i * 10 + 10]  # Example data
+        radar_fig = plt.figure(figsize=(cell_width / inch, row_height / inch), dpi=80)
+        radar_ax = radar_fig.add_subplot(111, polar=True)
+        radar_ax.plot(angles, values)
+        radar_ax.fill(angles, values, alpha=0.25)
+        plt.xticks(angles, ['A', 'B', 'C', 'D', 'E'])
+        radar_canvas = FigureCanvas(radar_fig)
+        radar_buffer = BytesIO()
+        radar_canvas.print_png(radar_buffer)
+        plt.close(radar_fig)
+        radar_image = Image(radar_buffer, width=cell_width, height=row_height)  # Use row_height here
+        
+        # Create a pie chart
+        pie_fig = plt.figure(figsize=(cell_width / inch, row_height / inch), dpi=80)
+        pie_ax = pie_fig.add_subplot(111)
+        labels = ['A', 'B', 'C', 'D', 'E']
+        sizes = [20, 30, 15, 10, 25]  # Example data
+        pie_ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
+        pie_ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        pie_canvas = FigureCanvas(pie_fig)
+        pie_buffer = BytesIO()
+        pie_canvas.print_png(pie_buffer)
+        plt.close(pie_fig)
+        pie_image = Image(pie_buffer, width=cell_width, height=row_height)  # Use row_height here
+        
+        # Append the radar plot and pie chart to the table data
+        table_data.append([radar_image, pie_image])
 
-    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height] * len(data))
+    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[row_height] * len(data))
 
     # Add style to the table (black border for all cells)
     style = TableStyle([
