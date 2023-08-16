@@ -114,6 +114,28 @@ def generate_pdf():
     pie_sizes = [20, 30, 15, 10, 25]
     pie_labels = ['A', 'B', 'C', 'D', 'E']
 
+    # Sample data for doughnut chart
+    doughnut_data = [25, 35, 20, 10, 10]
+    doughnut_labels = ['A', 'B', 'C', 'D', 'E']
+
+
+    # Sample data for radar chart
+    radar_data = [30, 40, 20, 50, 60]
+    radar_labels = ['A', 'B', 'C', 'D', 'E']
+
+
+    # Sample data for area chart
+    area_data = [
+    [10, 20, 30, 40, 50],
+    [20, 30, 40, 30, 20]
+    ]
+    area_labels = ['Series 1', 'Series 2']
+
+    # Sample data for bar chart
+    bar_data = [25, 40, 10, 30, 50]
+    bar_labels = ['A', 'B', 'C', 'D', 'E']
+
+
     available_width = doc.pagesize[0] - doc.leftMargin - doc.rightMargin
     available_height = doc.pagesize[1] - doc.topMargin - doc.bottomMargin
 
@@ -133,11 +155,24 @@ def generate_pdf():
             "Heading 2",
             Image("image2.jpg", width=cell_width, height=cell_height)
         ],
+      [
+            "Your Heading Text Here",
+            generate_area_chart(area_data, area_labels, cell_width, cell_height)
+        ],
+        [
+            "Heading 2",
+            generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
+        ],
+        [
+            "DoughNut Chart",
+            generate_doughnut_chart(doughnut_data,doughnut_labels,cell_width,cell_height)
+        ]
+     
         
     ]
 
     # Create the Table object with the chart data
-    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height, cell_height,cell_height]) #add cell_height here to add more rows
+    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height, cell_height,cell_height,cell_height,cell_height,cell_height]) #add cell_height here to add more rows
     style = TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)])
     table.setStyle(style)
 
