@@ -1,6 +1,6 @@
 from flask import Flask, send_file
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph, Spacer, Indenter,ListFlowable,ListItem
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 import matplotlib.pyplot as plt
@@ -142,19 +142,40 @@ def generate_pdf():
     available_height = doc.pagesize[1] - doc.topMargin - doc.bottomMargin
 
     cell_width = (available_width - 23) / 2
-    cell_height = (available_height - 4 * inch) / 2
+    cell_height = (available_height - 2 * inch) / 2
+    
 
-       # Define a custom font for the heading
-    custom_font = "Helvetica-Bold"
+    sub_cell_width = cell_width / 2  # Adjust sub-cell width
+    sub_cell_height = cell_height / 2  # Adjust sub-cell height
 
-# Create a multi-line paragraph with a heading at the top
-    paragraph_text = (
-        f"<font name='{custom_font}' size='12'>Custom Heading 2</font><br/><br/>"
-        "This is a multi-line paragraph with some example text. "
-        "You can add more lines as needed."
-    )
-    heading_paragraph = Paragraph(paragraph_text, getSampleStyleSheet()["Normal"])
 
+    # Define styles
+    styles = getSampleStyleSheet()
+    bullet_style = styles['Normal']
+    bullet_style.leading = 12  # Adjust spacing between lines
+
+    # Create bullet points for each sub-cell
+    sub_cell_bullet_points = [
+        "First bullet point in sub-cell.",
+        "Second bullet point in sub-cell.",
+        "Third bullet point in sub-cell.",
+        "4th bullet point in sub-cell"
+    ]
+
+    # Create a nested table with 2 rows and 2 columns within the "Your Heading Text Here" cell
+    sub_table_data = [
+        [
+            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[0], bullet_style),
+            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[1], bullet_style)
+        ],
+        [
+            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[2], bullet_style),
+            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[3], bullet_style)
+        ]
+    ]
+
+    sub_table = Table(sub_table_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=[sub_cell_height, sub_cell_height])
+    sub_table.setStyle(TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)]))
 
 
     table_data = [
@@ -163,34 +184,29 @@ def generate_pdf():
             generate_pie_chart(pie_sizes, pie_labels, cell_width, cell_height)
         ],
         [
-            "Your Heading Text Here",
-            Image("image1.png", width=cell_width, height=cell_height)
-        ],
-        [
-            heading_paragraph,
-            Image("image2.jpg", width=cell_width, height=cell_height)
-        ],
-      [
-            "Your Heading Text Here",
+            sub_table,  # Use the nested table here
             generate_area_chart(area_data, area_labels, cell_width, cell_height)
         ],
         [
-            "Heading 2",
+            "mera dil bhi etna pagal hai.!",
+            Image("image2.jpg", width=cell_width, height=cell_height)
+        ],
+        [
+            "Your Heading Text Here",
             generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
         ],
         [
             "DoughNut Chart",
-            generate_doughnut_chart(doughnut_data,doughnut_labels,cell_width,cell_height)
+            generate_doughnut_chart(doughnut_data, doughnut_labels, cell_width, cell_height)
         ]
-     
-        
     ]
 
+
+
     # Create the Table object with the chart data
-    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height, cell_height,cell_height,cell_height,cell_height,cell_height]) #add cell_height here to add more rows
+    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height] * 5)  # Adjust rowHeights as needed
     style = TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)])
     table.setStyle(style)
-
     # Build the PDF document
     elements = [table]
     doc.build(elements)
