@@ -1,79 +1,144 @@
 from flask import Flask, send_file
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from io import BytesIO
 
 app = Flask(__name__)
 
+# Function to generate a radar plot
+def generate_radar_chart(data, labels, width, height):
+    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
+    ax = fig.add_subplot(111, polar=True)
+    angles = np.linspace(0, 2 * np.pi, len(data), endpoint=False)
+    ax.plot(angles, data)
+    ax.fill(angles, data, alpha=0.25)
+    plt.xticks(angles, labels)
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+# Function to generate a pie chart
+def generate_pie_chart(sizes, labels, width, height):
+    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
+    ax = fig.add_subplot(111)
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
+    ax.axis('equal')
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+# Function to generate an area chart
+def generate_area_chart(data, labels, width, height):
+    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
+    ax = fig.add_subplot(111)
+    ax.stackplot(range(len(data[0])), data, labels=labels)
+    ax.legend(loc='upper left')
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+# Function to generate a bar chart
+def generate_bar_chart(data, labels, width, height):
+    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
+    ax = fig.add_subplot(111)
+    ax.bar(labels, data)
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+# Function to generate a doughnut chart
+def generate_doughnut_chart(data, labels, width, height):
+    fig, ax = plt.subplots(figsize=(width / inch, height / inch), dpi=80)
+    ax.pie(data, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140, wedgeprops={'edgecolor': 'white'})
+    center_circle = plt.Circle((0,0),0.70,fc='white')
+    fig.gca().add_artist(center_circle)
+    ax.axis('equal')
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+# Function to generate a line chart
+def generate_line_chart(data, labels, width, height):
+    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
+    ax = fig.add_subplot(111)
+    for line_data, label in zip(data, labels):
+        ax.plot(range(len(line_data)), line_data, label=label)
+    ax.legend(loc='upper left')
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+
+# Function to generate a polar chart
+def generate_polar_chart(data, labels, width, height):
+    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
+    ax = fig.add_subplot(111, projection='polar')
+    angles = np.linspace(0, 2 * np.pi, len(data), endpoint=False)
+    for line_data, label in zip(data, labels):
+        ax.plot(angles, line_data, label=label)
+    ax.legend(loc='upper right')
+    ax.set_xticks(angles)
+    ax.set_xticklabels(labels)
+    canvas = FigureCanvas(fig)
+    buffer = BytesIO()
+    canvas.print_png(buffer)
+    plt.close(fig)
+    return Image(buffer, width=width, height=height)
+
+
+
+
 @app.route('/')
 def generate_pdf():
-    # Create a PDF document with a margin of 23 pixels from all sides
     doc = SimpleDocTemplate("table_example.pdf", pagesize=letter, leftMargin=23, rightMargin=23, topMargin=23, bottomMargin=23)
 
-    # Define data for the table (2 columns and 5 rows)
-    data = [
-        ["Cell 1"],
-        ["Cell 2"],
-        ["Cell 3"],
-        ["Cell 4"],
-    ]
+    radar_data = [i * 10 + 10 for i in range(5)]
+    radar_labels = ['A', 'B', 'C', 'D', 'E']
+    pie_sizes = [20, 30, 15, 10, 25]
+    pie_labels = ['A', 'B', 'C', 'D', 'E']
 
-    # Calculate available width and height after considering margins
     available_width = doc.pagesize[0] - doc.leftMargin - doc.rightMargin
     available_height = doc.pagesize[1] - doc.topMargin - doc.bottomMargin
 
-    # Calculate cell width and height
-    cell_width = (available_width - 23) / 2  # Divide by 2 for 2 columns
-    cell_height = (available_height - 3 * inch) / len(data)
+    cell_width = (available_width - 23) / 2
+    cell_height = (available_height - 4 * inch) / 2
 
-    # Calculate row heights to cover the whole canvas with 23px margin
-    row_height = (available_height - 23 * 2) / len(data)
-
-    # Create a table with the data and adjusted cell dimensions
-    table_data = []
-    for i in range(len(data)):
-        # Create a radar plot
-        angles = np.linspace(0, 2 * np.pi, 5, endpoint=False)
-        values = [i * 10 + 10, i * 10 + 20, i * 10 + 15, i * 10 + 5, i * 10 + 10]  # Example data
-        radar_fig = plt.figure(figsize=(cell_width / inch, row_height / inch), dpi=80)
-        radar_ax = radar_fig.add_subplot(111, polar=True)
-        radar_ax.plot(angles, values)
-        radar_ax.fill(angles, values, alpha=0.25)
-        plt.xticks(angles, ['A', 'B', 'C', 'D', 'E'])
-        radar_canvas = FigureCanvas(radar_fig)
-        radar_buffer = BytesIO()
-        radar_canvas.print_png(radar_buffer)
-        plt.close(radar_fig)
-        radar_image = Image(radar_buffer, width=cell_width, height=row_height)  # Use row_height here
+    table_data = [
+        [
+            generate_radar_chart(radar_data, radar_labels, cell_width, cell_height),
+            generate_pie_chart(pie_sizes, pie_labels, cell_width, cell_height)
+        ],
+        [
+            "Your Heading Text Here",
+            Image("image1.png", width=cell_width, height=cell_height)
+        ],
+        [
+            "Heading 2",
+            Image("image2.jpg", width=cell_width, height=cell_height)
+        ],
         
-        # Create a pie chart
-        pie_fig = plt.figure(figsize=(cell_width / inch, row_height / inch), dpi=80)
-        pie_ax = pie_fig.add_subplot(111)
-        labels = ['A', 'B', 'C', 'D', 'E']
-        sizes = [20, 30, 15, 10, 25]  # Example data
-        pie_ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
-        pie_ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-        pie_canvas = FigureCanvas(pie_fig)
-        pie_buffer = BytesIO()
-        pie_canvas.print_png(pie_buffer)
-        plt.close(pie_fig)
-        pie_image = Image(pie_buffer, width=cell_width, height=row_height)  # Use row_height here
-        
-        # Append the radar plot and pie chart to the table data
-        table_data.append([radar_image, pie_image])
+    ]
 
-    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[row_height] * len(data))
-
-    # Add style to the table (black border for all cells)
-    style = TableStyle([
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Black border for all cells
-    ])
-
+    # Create the Table object with the chart data
+    table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height, cell_height,cell_height]) #add cell_height here to add more rows
+    style = TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)])
     table.setStyle(style)
 
     # Build the PDF document
@@ -84,3 +149,6 @@ def generate_pdf():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
