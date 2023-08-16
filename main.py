@@ -6,6 +6,8 @@ from reportlab.lib.units import inch
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph
 from io import BytesIO
 
 app = Flask(__name__)
@@ -142,6 +144,19 @@ def generate_pdf():
     cell_width = (available_width - 23) / 2
     cell_height = (available_height - 4 * inch) / 2
 
+       # Define a custom font for the heading
+    custom_font = "Helvetica-Bold"
+
+# Create a multi-line paragraph with a heading at the top
+    paragraph_text = (
+        f"<font name='{custom_font}' size='12'>Custom Heading 2</font><br/><br/>"
+        "This is a multi-line paragraph with some example text. "
+        "You can add more lines as needed."
+    )
+    heading_paragraph = Paragraph(paragraph_text, getSampleStyleSheet()["Normal"])
+
+
+
     table_data = [
         [
             generate_radar_chart(radar_data, radar_labels, cell_width, cell_height),
@@ -152,7 +167,7 @@ def generate_pdf():
             Image("image1.png", width=cell_width, height=cell_height)
         ],
         [
-            "Heading 2",
+            heading_paragraph,
             Image("image2.jpg", width=cell_width, height=cell_height)
         ],
       [
