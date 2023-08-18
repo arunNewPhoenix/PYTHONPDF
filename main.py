@@ -1,5 +1,5 @@
 from flask import Flask, send_file
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter,A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph, Spacer, Indenter,ListFlowable,ListItem
 from reportlab.lib import colors
 from reportlab.lib.units import inch
@@ -109,7 +109,7 @@ def generate_polar_chart(data, labels, width, height):
 
 @app.route('/')
 def generate_pdf():
-    doc = SimpleDocTemplate("table_example.pdf", pagesize=letter, leftMargin=23, rightMargin=23, topMargin=23, bottomMargin=23)
+    doc = SimpleDocTemplate("table_example.pdf", pagesize=A4, leftMargin=23, rightMargin=23, topMargin=23 )
 
     radar_data = [i * 10 + 10 for i in range(5)]
     radar_labels = ['A', 'B', 'C', 'D', 'E']
@@ -141,8 +141,8 @@ def generate_pdf():
     available_width = doc.pagesize[0] - doc.leftMargin - doc.rightMargin
     available_height = doc.pagesize[1] - doc.topMargin - doc.bottomMargin
 
-    cell_width = (available_width - 23) / 2
-    cell_height = (available_height - 2 * inch) / 2
+    cell_width = (available_width- 23) / 2
+    cell_height = (doc.pagesize[1] - 2 * inch) / 2
     
 
     sub_cell_width = cell_width / 2  # Adjust sub-cell width
