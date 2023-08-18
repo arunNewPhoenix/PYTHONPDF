@@ -159,22 +159,28 @@ def generate_pdf():
         "First bullet point in sub-cell.",
         "Second bullet point in sub-cell.",
         "Third bullet point in sub-cell.",
-        "4th bullet point in sub-cell"
+        "4th bullet"
     ]
 
-    # Create a nested table with 2 rows and 2 columns within the "Your Heading Text Here" cell
     sub_table_data = [
-        [
-            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[0], bullet_style),
-            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[1], bullet_style)
-        ],
-        [
-            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[2], bullet_style),
-            Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[3], bullet_style)
-        ]
+    [
+        "Sub-Table Heading",  # Heading cell
+        None
+    ],
+    [
+        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[0], bullet_style),
+        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[1], bullet_style)
+    ],
+    [
+        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[2], bullet_style),
+        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[3], bullet_style)
     ]
+]
+# Decrease the height of the sub-table rows
+    sub_table_row_height = sub_cell_height / 1.5  # Adjust the value as needed
 
-    sub_table = Table(sub_table_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=[sub_cell_height, sub_cell_height])
+    sub_table_row_heights = [sub_table_row_height] * len(sub_table_data)
+    sub_table = Table(sub_table_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=sub_table_row_heights)
     sub_table.setStyle(TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)]))
 
 
