@@ -154,13 +154,22 @@ def generate_pdf():
     bullet_style = styles['Normal']
     bullet_style.leading = 12  # Adjust spacing between lines
 
+    bottom_margin = 20
+    cell_style = TableStyle([
+    ('BOTTOMPADDING', (0, 0), (-1, -1), bottom_margin),
+    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+])
+
     # Create bullet points for each sub-cell
     sub_cell_bullet_points = [
-        "First bullet point in sub-cell.",
+        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
         "Second bullet point in sub-cell.",
         "Third bullet point in sub-cell.",
         "4th bullet"
     ]
+
+    defination = "First bullet point in sub-cell.Second bullet point in sub-cell.Third bullet point in sub-cell.4th bulletFirst bullet point in sub-cell.Second bullet point in sub-cell.Third bullet point in sub-cell.4th bullet"
+
 
     sub_table_data = [
     [
@@ -177,42 +186,46 @@ def generate_pdf():
     ]
 ]
 # Decrease the height of the sub-table rows
-    sub_table_row_height = sub_cell_height / 1.5  # Adjust the value as needed
+    sub_table_row_height = sub_cell_height / 2 # Adjust the value as needed
 
     sub_table_row_heights = [sub_table_row_height] * len(sub_table_data)
     sub_table = Table(sub_table_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=sub_table_row_heights)
-    sub_table.setStyle(TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+    sub_table.setStyle(TableStyle([
+    ('GRID', (0, 0), (-1, -1), 1, colors.white),
+    ('VALIGN', (0, 0), (-1, 0), 'TOP')  # Align sub-table heading at the top
+]))
 
 
     table_data = [
-        [
-            generate_radar_chart(radar_data, radar_labels, cell_width, cell_height),
-            generate_pie_chart(pie_sizes, pie_labels, cell_width, cell_height)
-        ],
-        [
-            sub_table,  # Use the nested table here
-            generate_area_chart(area_data, area_labels, cell_width, cell_height)
-        ],
-        [
-            "mera dil bhi etna pagal hai.!",
-            Image("image2.jpg", width=cell_width, height=cell_height)
-        ],
-        [
-            "Your Heading Text Here",
-            generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
-        ],
-        [
-            "DoughNut Chart",
-            generate_doughnut_chart(doughnut_data, doughnut_labels, cell_width, cell_height)
-        ]
+    [
+        generate_radar_chart(radar_data, radar_labels, cell_width, cell_height),
+        generate_pie_chart(pie_sizes, pie_labels, cell_width, cell_height)
+    ],
+    [
+        sub_table,  # Use the nested table here
+        generate_area_chart(area_data, area_labels, cell_width, cell_height)
+    ],
+    [
+        Paragraph("<font size='12'><b>Sub-Cell Heading</b></font><br/>" +
+                  "<bullet>&bull;</bullet> " + defination, styles['Normal']),
+        Image("image2.jpg", width=cell_width, height=cell_height)
+    ],
+    [
+        "Your Heading Text Here",
+        generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
+    ],
+    [
+        "DoughNut Chart",
+        generate_doughnut_chart(doughnut_data, doughnut_labels, cell_width, cell_height)
     ]
+]
 
 
 
     # Create the Table object with the chart data
     table = Table(table_data, colWidths=[cell_width, cell_width], rowHeights=[cell_height] * 5)  # Adjust rowHeights as needed
     style = TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)])
-    table.setStyle(style)
+    table.setStyle(cell_style)
     # Build the PDF document
     elements = [table]
     doc.build(elements)
