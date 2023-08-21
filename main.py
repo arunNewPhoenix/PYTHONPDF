@@ -164,13 +164,13 @@ def generate_pdf():
 ])
      # Create bullet points for each sub-cell
     sub_cell_bullet_points = [
-        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
-        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
-        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
-        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things."
+        "Sub-heading 1:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
+        "Sub-heading 2:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
+        "Sub-heading 3:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
+        "Sub-heading 4:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things."
     ]
 
-    defination = "First bullet point in sub-cell.Second bullet point in sub-cell.Third bullet point in sub-cell.4th bulletFirst bullet point in sub-cell.Second bullet point in sub-cell.Third bullet point in sub-cell.4th bullet"
+    defination = "ESTJs rely on objective information and logic to make decisions rather than personal feelings. They are skilled at making objective, impersonal, and impartial decisions. Rather than focusing on their own subjective feelings when they are making judgments, they consider facts and logic in order to make rational choices. People with ESTJ personality types tend to be very practical. They enjoy learning about things that they can see an immediate, real-world use for, but tend to lose interest in things that are abstract or theoretical. ESTJs enjoy concrete facts as opposed to abstract information."
     sub_heading_height = 30  # Set the desired spacing for the sub-heading row
     sub_cell_height = 150  # Set the desired height for the sub-cell rows
 
@@ -200,6 +200,7 @@ def generate_pdf():
     ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in the sub-table at the top
 ]))
+    extra_space = 5
 
 
     table_data = [
@@ -212,8 +213,9 @@ def generate_pdf():
         generate_area_chart(area_data, area_labels, cell_width, cell_height)
     ],
     [
-        Paragraph("<font size='12'><b>Sub-Cell Heading</b></font><br/>" +
-                  "<bullet>&bull;</bullet> " + defination, styles['Normal']),
+         Paragraph("<font size='12'><b>Sub-Cell Heading</b></font><br/>" +
+              "<br/>" * extra_space +  # Add extra space here
+              "<bullet>&bull;</bullet> " + defination, styles['Normal']),
         Image("image2.jpg", width=cell_width, height=cell_height)
     ],
     [
