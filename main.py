@@ -6,7 +6,7 @@ from reportlab.lib.units import inch
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.platypus import Paragraph
 from io import BytesIO
 
@@ -201,7 +201,35 @@ def generate_pdf():
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in the sub-table at the top
 ]))
     extra_space = 5
+    
+    # Create bullet points for sub-table_2
+    sub_table_2_bullet_points = [
+    "First bullet point in sub-table_2.",
+    "Second bullet point in sub-table_2.",
+    "Third bullet point in sub-table_2.",
+    "Fourth bullet point in sub-table_2."
+]
 
+# Calculate the height of sub-table_2 rows
+    sub_table_2_row_height = sub_cell_height / len(sub_table_2_bullet_points)
+    # Define a style for the bold heading
+    bold_style = ParagraphStyle(name='BoldStyle')
+    bold_style.fontName = 'Helvetica-Bold'
+# Create the data for sub-table_2
+    sub_table_2_data = [
+    [Paragraph("<b>Sub-Table_2 Heading</b>", bold_style), None],
+]
+
+    for bullet_point in sub_table_2_bullet_points:
+        sub_table_2_data.append([Paragraph("<bullet>&bull;</bullet> " + bullet_point, bullet_style), None])
+
+# Create sub-table_2 with adjusted row heights
+    sub_table_2 = Table(sub_table_2_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=[sub_cell_height] + [sub_table_2_row_height] * len(sub_table_2_bullet_points))
+    sub_table_2.setStyle(TableStyle([
+    ('GRID', (0, 0), (-1, -1), 1, colors.white),
+    ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
+    ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in sub-table_2 at the top
+]))
 
     table_data = [
     [
@@ -216,10 +244,10 @@ def generate_pdf():
          Paragraph("<font size='12'><b>Sub-Cell Heading</b></font><br/>" +
               "<br/>" * extra_space +  # Add extra space here
               "<bullet>&bull;</bullet> " + defination, styles['Normal']),
-        Image("image2.jpg", width=cell_width, height=cell_height)
+        Image("image2.png", width=cell_width, height=cell_height)
     ],
     [
-        "Your Heading Text Here",
+        sub_table_2 ,
         generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
     ],
     [
