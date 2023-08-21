@@ -155,9 +155,12 @@ def generate_pdf():
     bullet_style.leading = 12  # Adjust spacing between lines
 
     bottom_margin = 20
+    top_margin = 10  
     cell_style = TableStyle([
+    ('TOPPADDING', (0, 0), (-1, -1), top_margin),    
     ('BOTTOMPADDING', (0, 0), (-1, -1), bottom_margin),
-    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('VALIGN', (0, 0), (-1, -1), 'TOP')  # Align all cells in the cell_style at the top
 ])
      # Create bullet points for each sub-cell
     sub_cell_bullet_points = [
