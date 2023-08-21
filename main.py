@@ -227,13 +227,49 @@ def generate_pdf():
 # Add bullet points with adjusted row height
     for bullet_point in sub_table_2_bullet_points:
         sub_table_2_data.append([Paragraph("<bullet>&bull;</bullet> " + bullet_point, bullet_style)])
+# Double the width of each cell in sub_table_2
+    sub_cell_width_2 = sub_cell_width * 2  # Double the width of each cell
 
-# Create sub-table_2 with adjusted row heights
-    sub_table_2 = Table(sub_table_2_data, colWidths=[sub_cell_width], rowHeights=sub_table_2_row_height)
+# Create sub-table_2 with double width and adjusted row heights
+    sub_table_2 = Table(sub_table_2_data, colWidths=[sub_cell_width_2], rowHeights=sub_table_2_row_height)
     sub_table_2.setStyle(TableStyle([
     ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in sub-table_2 at the top
+]))
+
+    
+    # Create bullet points for sub-table_3
+    sub_table_3_bullet_points = [
+    "Fifth bullet point in sub-table_3.",
+    "Sixth bullet point in sub-table_3.",
+    "Seventh bullet point in sub-table_3.",
+    "Eighth bullet point in sub-table_3.",
+    
+]
+    sub_3_heading_height = 25
+    sub_3_cell_height = 76
+# Calculate the height of sub-table_3 rows
+    sub_table_3_row_height = [sub_3_heading_height] + [sub_3_cell_height] * (len(sub_table_3_bullet_points))
+
+# Create the data for sub-table_3
+    sub_table_3_data = [
+    [Paragraph("<b>Sub-Table_3 Heading</b>", bold_style), None],
+]
+
+# Add bullet points with adjusted row height
+    for bullet_point in sub_table_3_bullet_points:
+        sub_table_3_data.append([Paragraph("<bullet>&bull;</bullet> " + bullet_point, bullet_style), None])
+
+# Increase the width of each cell
+    sub_cell_width_3 = sub_cell_width * 2  # Double the width of each cell
+
+# Create sub-table_3 with two columns and adjusted row heights
+    sub_table_3 = Table(sub_table_3_data, colWidths=[sub_cell_width_3 / 2, sub_cell_width_3 / 2], rowHeights=sub_table_3_row_height)
+    sub_table_3.setStyle(TableStyle([
+    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
+    ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in sub-table_3 at the top
 ]))
 
     table_data = [
@@ -256,7 +292,7 @@ def generate_pdf():
         generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
     ],
     [
-        "DoughNut Chart",
+        sub_table_3,
         generate_doughnut_chart(doughnut_data, doughnut_labels, cell_width, cell_height)
     ]
 ]
