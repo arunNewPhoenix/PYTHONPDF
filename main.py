@@ -159,21 +159,22 @@ def generate_pdf():
     ('BOTTOMPADDING', (0, 0), (-1, -1), bottom_margin),
     ('GRID', (0, 0), (-1, -1), 1, colors.black)
 ])
-
-    # Create bullet points for each sub-cell
+     # Create bullet points for each sub-cell
     sub_cell_bullet_points = [
         "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
-        "Second bullet point in sub-cell.",
-        "Third bullet point in sub-cell.",
-        "4th bullet"
+        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
+        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
+        "Extroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things."
     ]
 
     defination = "First bullet point in sub-cell.Second bullet point in sub-cell.Third bullet point in sub-cell.4th bulletFirst bullet point in sub-cell.Second bullet point in sub-cell.Third bullet point in sub-cell.4th bullet"
+    sub_heading_height = 30  # Set the desired spacing for the sub-heading row
+    sub_cell_height = 150  # Set the desired height for the sub-cell rows
 
-
+# Create the sub-table data with adjusted sub-heading height
     sub_table_data = [
     [
-        "Sub-Table Heading",  # Heading cell
+        Paragraph("<b>Sub-Table Heading</b>", styles['Normal']),
         None
     ],
     [
@@ -181,18 +182,20 @@ def generate_pdf():
         Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[1], bullet_style)
     ],
     [
-        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[2], bullet_style),
-        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[3], bullet_style)
+        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[2], bullet_style, 'top'),
+        Paragraph("<bullet>&bull;</bullet> " + sub_cell_bullet_points[3], bullet_style, 'top')
     ]
 ]
-# Decrease the height of the sub-table rows
-    sub_table_row_height = sub_cell_height / 2 # Adjust the value as needed
 
-    sub_table_row_heights = [sub_table_row_height] * len(sub_table_data)
+# Set the row heights for the sub-table
+    sub_table_row_heights = [sub_heading_height] + [sub_cell_height] * (len(sub_table_data) - 1)
+
+# Create the sub-table with adjusted row heights
     sub_table = Table(sub_table_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=sub_table_row_heights)
     sub_table.setStyle(TableStyle([
-    ('GRID', (0, 0), (-1, -1), 1, colors.white),
-    ('VALIGN', (0, 0), (-1, 0), 'TOP')  # Align sub-table heading at the top
+    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
+    ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in the sub-table at the top
 ]))
 
 
