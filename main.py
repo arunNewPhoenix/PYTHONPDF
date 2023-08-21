@@ -196,7 +196,7 @@ def generate_pdf():
 # Create the sub-table with adjusted row heights
     sub_table = Table(sub_table_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=sub_table_row_heights)
     sub_table.setStyle(TableStyle([
-    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('GRID', (0, 0), (-1, -1), 1, colors.white),
     ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in the sub-table at the top
 ]))
@@ -233,7 +233,7 @@ def generate_pdf():
 # Create sub-table_2 with double width and adjusted row heights
     sub_table_2 = Table(sub_table_2_data, colWidths=[sub_cell_width_2], rowHeights=sub_table_2_row_height)
     sub_table_2.setStyle(TableStyle([
-    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('GRID', (0, 0), (-1, -1), 1, colors.white),
     ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in sub-table_2 at the top
 ]))
@@ -287,7 +287,7 @@ def generate_pdf():
 # Create the sub-table with adjusted row heights
     sub_table_3 = Table(sub_table_3_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=sub_table_3_row_heights)
     sub_table_3.setStyle(TableStyle([
-    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('GRID', (0, 0), (-1, -1), 1, colors.white),
     ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in the sub-table at the top
 ]))
