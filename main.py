@@ -210,23 +210,28 @@ def generate_pdf():
     "Fourth bullet point in sub-table_2."
 ]
 
+    sub_2_heading_height   = 25
+    sub_2_cell_height = 76
 # Calculate the height of sub-table_2 rows
-    sub_table_2_row_height = sub_cell_height / len(sub_table_2_bullet_points)
-    # Define a style for the bold heading
+    sub_table_2_row_height = [sub_2_heading_height] + [sub_2_cell_height] * (len(sub_table_2_bullet_points))
+
+# Define a style for the bold heading
     bold_style = ParagraphStyle(name='BoldStyle')
     bold_style.fontName = 'Helvetica-Bold'
+
 # Create the data for sub-table_2
     sub_table_2_data = [
-    [Paragraph("<b>Sub-Table_2 Heading</b>", bold_style), None],
+    [Paragraph("<b>Sub-Table_2 Heading</b>", bold_style)],
 ]
 
+# Add bullet points with adjusted row height
     for bullet_point in sub_table_2_bullet_points:
-        sub_table_2_data.append([Paragraph("<bullet>&bull;</bullet> " + bullet_point, bullet_style), None])
+        sub_table_2_data.append([Paragraph("<bullet>&bull;</bullet> " + bullet_point, bullet_style)])
 
 # Create sub-table_2 with adjusted row heights
-    sub_table_2 = Table(sub_table_2_data, colWidths=[sub_cell_width, sub_cell_width], rowHeights=[sub_cell_height] + [sub_table_2_row_height] * len(sub_table_2_bullet_points))
+    sub_table_2 = Table(sub_table_2_data, colWidths=[sub_cell_width], rowHeights=sub_table_2_row_height)
     sub_table_2.setStyle(TableStyle([
-    ('GRID', (0, 0), (-1, -1), 1, colors.white),
+    ('GRID', (0, 0), (-1, -1), 1, colors.black),
     ('VALIGN', (0, 0), (-1, 0), 'TOP'),  # Align heading cell at the top
     ('VALIGN', (0, 1), (-1, -1), 'TOP')  # Align all other cells in sub-table_2 at the top
 ]))
