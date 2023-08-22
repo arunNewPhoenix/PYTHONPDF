@@ -44,11 +44,15 @@ def generate_pie_chart(sizes, labels, colors, width, height):
     return Image(buffer, width=width, height=height)
 
 # Function to generate an area chart
-def generate_area_chart(data, labels, width, height):
+def generate_area_chart(data, labels, colors, width, height):
     fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
     ax = fig.add_subplot(111)
-    ax.stackplot(range(len(data[0])), data, labels=labels)
+
+    # Use the provided colors when calling stackplot
+    ax.stackplot(range(len(data[0])), data, labels=labels, colors=colors)
+
     ax.legend(loc='upper left')
+
     canvas = FigureCanvas(fig)
     buffer = BytesIO()
     canvas.print_png(buffer)
@@ -203,6 +207,7 @@ def generate_pdf():
     [20, 30, 40, 30, 20]
     ]
     area_labels = ['Series 1', 'Series 2']
+    area_colors = ['#f7ecb0', '#ffb3e6', '#99ff99']  # Example colors
 
     # Sample data for bar chart
     bar_data = [25, 40, 10, 30, 50]
@@ -377,7 +382,7 @@ def generate_pdf():
     ],
     [
         sub_table,  # Use the nested table here
-        generate_area_chart(area_data, area_labels, cell_width, cell_height)
+        generate_area_chart(area_data, area_labels, area_colors, cell_width, cell_height)
     ],
     [
          Paragraph("<font size='12'><b>Sub-Cell Heading</b></font><br/>" +
