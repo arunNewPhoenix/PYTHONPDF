@@ -9,6 +9,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.platypus import Paragraph
 from io import BytesIO
+import random
 
 app = Flask(__name__)
 
@@ -50,11 +51,72 @@ def generate_area_chart(data, labels, width, height):
     plt.close(fig)
     return Image(buffer, width=width, height=height)
 
-# Function to generate a bar chart
-def generate_bar_chart(data, labels, width, height):
-    fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
-    ax = fig.add_subplot(111)
-    ax.bar(labels, data)
+def add_value_labels(ax, spacing=5):
+    # For each bar: place a label
+    for rect in ax.patches:
+        # Get X and Y placement of label from rect
+        y_value = rect.get_height()
+        x_value = rect.get_x() + rect.get_width() / 2
+
+        # Number of points between bar and label; change to your liking
+        space = spacing
+        # Vertical alignment for positive values
+        va = 'bottom'
+
+        # If the value of the bar is negative: place the label below the bar
+        if y_value < 0:
+            # Invert space to place the label below
+            space *= -1
+            # Vertically align the label at the top
+            va = 'top'
+
+        # Use Y value as the label and format the number with one decimal place
+        label = '{:,.0f}'.format(y_value)
+
+        # Create annotation
+        ax.annotate(
+            label,                      # Use `label` as the label
+            (x_value, y_value),         # Place the label at the end of the bar
+            xytext=(0, space),          # Vertically shift the label by `space`
+            textcoords='offset points', # Interpret `xytext` as offset in points
+            ha='center',                # Horizontally center the label
+            va=va)                      # Vertically align the label differently for
+                                        # positive and negative values
+
+# Function to generate a bar chart with labels, subtitle, and y-label
+def generate_bar_chart_with_labels(data, labels, width, height, subtitle, y_label):
+    fig, ax = plt.subplots(figsize=(width / inch, height / inch), dpi=80)
+    bars = ax.bar(range(len(labels)), data, zorder=0)  # Use range(len(labels)) for x-axis positions
+
+    # Set custom x-axis labels
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, rotation=45)
+
+    # Call the function to add value labels to the chart
+    add_value_labels(ax)
+
+    # Set a subtitle
+    from matplotlib.transforms import blended_transform_factory
+    trans = blended_transform_factory(ax.transData, ax.transAxes)
+    ann = ax.annotate(subtitle, xy=(0.5, 1.02), xycoords=trans, ha='center', fontsize=12, color='blue', weight='bold')
+
+    # Set the y-label
+    ax.set_ylabel(y_label, color='#525252')
+
+    # Add grid lines
+    ax.grid(zorder=0)
+
+    # Apply color gradient to bars
+    grad = np.atleast_2d(np.linspace(0, 1, 256)).T
+    lim = ax.get_xlim() + ax.get_ylim()
+    for bar in bars:
+        bar.set_zorder(1)
+        bar.set_facecolor('none')
+        x, y = bar.get_xy()
+        w, h = bar.get_width(), bar.get_height()
+        ax.imshow(grad, extent=[x, x + w, y, y + h], aspect='auto', zorder=1)
+    ax.axis(lim)
+
     canvas = FigureCanvas(fig)
     buffer = BytesIO()
     canvas.print_png(buffer)
@@ -135,7 +197,14 @@ def generate_pdf():
 
     # Sample data for bar chart
     bar_data = [25, 40, 10, 30, 50]
-    bar_labels = ['A', 'B', 'C', 'D', 'E']
+    bar_labels = ['Abcb', 'Bccdc', 'Ccdcnv', 'Dfvf', 'Efvfv']
+
+    
+
+# Generate some random data for the bar chart
+    data = [random.randint(10, 50) for _ in range(len(bar_labels))]
+    subtitle = "Sample Bar Chart"
+    y_label = "Frequency"
 
 
     available_width = doc.pagesize[0] - doc.leftMargin - doc.rightMargin
@@ -164,7 +233,7 @@ def generate_pdf():
 ])
      # Create bullet points for each sub-cell
     sub_cell_bullet_points = [
-        "Sub-heading 1:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
+        "Extraversion :\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
         "Sub-heading 2:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
         "Sub-heading 3:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things.",
         "Sub-heading 4:\nExtroverts gain energy from people, situations and things around them which can also be called as “the outer world”. They are sociable and like being with people. They like to go and explore the outer world and try new things."
@@ -177,7 +246,7 @@ def generate_pdf():
 # Create the sub-table data with adjusted sub-heading height
     sub_table_data = [
     [
-        Paragraph("<b>Sub-Table Heading</b>", styles['Normal']),
+        Paragraph("<b>Individual Trait's Definition</b>", styles['Normal']),
         None
     ],
     [
@@ -309,7 +378,7 @@ def generate_pdf():
     ],
     [
         sub_table_2 ,
-        generate_bar_chart(bar_data, bar_labels, cell_width, cell_height)
+        generate_bar_chart_with_labels(bar_data, bar_labels, cell_width, cell_height, subtitle, y_label)
     ],
     [
         sub_table_3,
