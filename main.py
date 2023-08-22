@@ -107,8 +107,12 @@ def generate_bar_chart_with_labels(data, labels, width, height, subtitle, y_labe
     # Set the y-label
     ax.set_ylabel(y_label, color='#525252')
 
-    # Add grid lines
-    ax.grid(zorder=0)
+    # Remove axis spines and grid lines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.grid(False)
 
     # Apply color gradient to bars
     grad = np.atleast_2d(np.linspace(0, 1, 256)).T
