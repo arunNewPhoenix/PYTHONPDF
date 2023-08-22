@@ -136,12 +136,16 @@ def generate_bar_chart_with_labels(data, labels, width, height, subtitle, y_labe
     return Image(buffer, width=width, height=height)
 
 # Function to generate a doughnut chart
-def generate_doughnut_chart(data, labels, width, height):
+def generate_doughnut_chart(data, labels, colors, width, height):
     fig, ax = plt.subplots(figsize=(width / inch, height / inch), dpi=80)
-    ax.pie(data, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140, wedgeprops={'edgecolor': 'white'})
+    
+    # Use the provided colors when calling ax.pie
+    ax.pie(data, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140, wedgeprops={'edgecolor': 'white'}, colors=colors)
+    
     center_circle = plt.Circle((0,0),0.70,fc='white')
     fig.gca().add_artist(center_circle)
     ax.axis('equal')
+    
     canvas = FigureCanvas(fig)
     buffer = BytesIO()
     canvas.print_png(buffer)
@@ -194,6 +198,7 @@ def generate_pdf():
     # Sample data for doughnut chart
     doughnut_data = [25, 35, 20, 10, 10]
     doughnut_labels = ['A', 'B', 'C', 'D', 'E']
+    doughnut_colors = ['#f7ecb0', '#ffb3e6', '#99ff99', '#66b3ff']
 
 
     # Sample data for radar chart
@@ -396,7 +401,7 @@ def generate_pdf():
     ],
     [
         sub_table_3,
-        generate_doughnut_chart(doughnut_data, doughnut_labels, cell_width, cell_height)
+        generate_doughnut_chart(doughnut_data, doughnut_labels, doughnut_colors, cell_width, cell_height)
     ]
 ]
 
