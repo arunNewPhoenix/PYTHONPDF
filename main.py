@@ -28,11 +28,15 @@ def generate_radar_chart(data, labels, width, height):
     return Image(buffer, width=width, height=height)
 
 # Function to generate a pie chart
-def generate_pie_chart(sizes, labels, width, height):
+def generate_pie_chart(sizes, labels, colors, width, height):
     fig = plt.figure(figsize=(width / inch, height / inch), dpi=80)
     ax = fig.add_subplot(111)
-    ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
+
+    # Create a pie chart with custom colors
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140, colors=colors)
+
     ax.axis('equal')
+
     canvas = FigureCanvas(fig)
     buffer = BytesIO()
     canvas.print_png(buffer)
@@ -175,8 +179,9 @@ def generate_pdf():
 
     radar_data = [i * 10 + 10 for i in range(5)]
     radar_labels = ['A', 'B', 'C', 'D', 'E']
-    pie_sizes = [20, 30, 15, 10, 25]
-    pie_labels = ['A', 'B', 'C', 'D', 'E']
+    sizes = [30, 20, 50]  
+    labels = ['Label1', 'Label2', 'Label3'] 
+    Piecolors = ['#f7ecb0', '#ffb3e6', '#99ff99']
 
     # Sample data for doughnut chart
     doughnut_data = [25, 35, 20, 10, 10]
@@ -364,7 +369,7 @@ def generate_pdf():
     table_data = [
     [
         generate_radar_chart(radar_data, radar_labels, cell_width, cell_height),
-        generate_pie_chart(pie_sizes, pie_labels, cell_width, cell_height)
+        generate_pie_chart(sizes, labels, Piecolors, cell_width,cell_height)
     ],
     [
         sub_table,  # Use the nested table here
