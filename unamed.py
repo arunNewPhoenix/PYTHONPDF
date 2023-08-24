@@ -46,37 +46,45 @@ def generate_pdf():
     c.setFont("Helvetica-Bold", 14)  # Set the font and size for the heading
     c.drawString(x + 20, y + height - 20, heading)
 
+    # Set the font and size for the points
+    font_size = 12
+    c.setFont("Helvetica-Bold", font_size)
+
+    # Calculate the initial y position for the points
+    line_y = y + height - 50
+
     # Add three points on different lines inside the rectangle
     points = [
-    "Point 1: This is the first point.",
-    "Point 2: This is the second point.",
-    "Point 3: This is the third point.",
-]
+        "Point 1: This is the first point.",
+        "Point 2: This is the second point.",
+        "Point 3: This is the third point.",
+    ]
 
-    c.setFont("Helvetica-Bold", 12)  # Set the font and size for the points
+    # Set a fixed vertical spacing between points
+    vertical_spacing = 20
 
-# Set the y position for the points
-    for i, point in enumerate(points):
-        line_y = y + height - 50 - (i * 20)
+    # Draw the points with consistent font size and spacing
+    for point in points:
         c.drawString(x + 20, line_y, point)
+        line_y -= vertical_spacing  # Adjust the y position for the next point
 
-# Add another string just below the third point with a different font size
-        current_time = datetime.now().strftime("%B %d, %Y %I:%M %p")  # Format the current time
-        additional_text = f"Test Time: {current_time}"
-        c.setFont("Helvetica-Bold", 10)  # Set a different font size
-        additional_text_y = y + height - 50 - (len(points) * 20) - 20  # Adjust the position
-        c.drawString(x + 20, additional_text_y, additional_text)
+    # Add another string just below the third point with a different font size
+    current_time = datetime.now().strftime("%B %d, %Y %I:%M %p")  # Format the current time
+    additional_text = f"Test Time: {current_time}"
+    c.setFont("Helvetica-Bold", 10)  # Set a different font size
+    additional_text_y = y + height - (len(points) + 1) * vertical_spacing - 80  # Adjust the position
+    c.drawString(x + 20, additional_text_y, additional_text)
 
-
-
-    text_below_rect = "Career Couselling changes"
+    # Add a string below the rectangle
+    text_below_rect = "Career Counselling changes"
     c.setFont("Helvetica-Bold", 12)  # Set the font and size for the text
-    text_y = y - 184  #y -pos for the text
+    text_y = y - 184  # Adjust the y position for the text
     c.drawString(x + 20, text_y, text_below_rect)
 
-    additional_text = "Test Report"
-    additional_text_y = text_y - 20  #y -pos for the text
-    c.drawString(x + 20, additional_text_y, additional_text)
+    # Add another string just below the text_below_rect
+    additional_text_below = "Test Report"
+    additional_text_below_y = text_y - vertical_spacing  # Adjust the position
+    c.drawString(x + 20, additional_text_below_y, additional_text_below)
 
     # Save the PDF file
     c.save()
@@ -85,6 +93,5 @@ def generate_pdf():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
