@@ -30,7 +30,7 @@ def generate_pdf():
 
     # Set the line width and line color for the rectangle
     line_width = 2  # Adjust the line width as needed
-    line_color = (0, 0, 0)  # Adjust the line color as needed (black in RGB)
+    line_color = (248/255, 218/255, 105/255)  # RGB color: #f8da69
 
     # Draw a rounded rectangle below the image
     x, y, width, height = 100, image_y - 280, 400, 200  # Adjust the position, width, and height as needed
