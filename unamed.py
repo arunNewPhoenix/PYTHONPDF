@@ -44,7 +44,7 @@ def generate_pdf():
     # Add a heading inside the rectangle
     heading = "Tushar Sadana"
     c.setFont("Helvetica-Bold", 21)  # Set the font and size for the heading
-    c.drawString(x + 20, y + height - 20, heading)
+    c.drawString(x + 20, y + height - 30, heading)
 
     # Dictionary of points with labels
     points = {
