@@ -2,6 +2,7 @@ from flask import Flask, send_file
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -47,20 +48,35 @@ def generate_pdf():
 
     # Add three points on different lines inside the rectangle
     points = [
-        "Point 1: This is the first point.",
-        "Point 2: This is the second point.",
-        "Point 3: This is the third point.",
-    ]
+    "Point 1: This is the first point.",
+    "Point 2: This is the second point.",
+    "Point 3: This is the third point.",
+]
+
     c.setFont("Helvetica-Bold", 12)  # Set the font and size for the points
+
+# Set the y position for the points
     for i, point in enumerate(points):
         line_y = y + height - 50 - (i * 20)
         c.drawString(x + 20, line_y, point)
 
-    # Add a string 34 points below the rectangle
-    text_below_rect = "This is 34 points below the rectangle."
+# Add another string just below the third point with a different font size
+        current_time = datetime.now().strftime("%B %d, %Y %I:%M %p")  # Format the current time
+        additional_text = f"Test Time: {current_time}"
+        c.setFont("Helvetica-Bold", 10)  # Set a different font size
+        additional_text_y = y + height - 50 - (len(points) * 20) - 20  # Adjust the position
+        c.drawString(x + 20, additional_text_y, additional_text)
+
+
+
+    text_below_rect = "Career Couselling changes"
     c.setFont("Helvetica-Bold", 12)  # Set the font and size for the text
-    text_y = y - 184  # Calculate the y position 34 points below the rectangle
+    text_y = y - 184  #y -pos for the text
     c.drawString(x + 20, text_y, text_below_rect)
+
+    additional_text = "Test Report"
+    additional_text_y = text_y - 20  #y -pos for the text
+    c.drawString(x + 20, additional_text_y, additional_text)
 
     # Save the PDF file
     c.save()
