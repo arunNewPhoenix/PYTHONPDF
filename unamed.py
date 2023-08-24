@@ -51,14 +51,14 @@ def generate_pdf():
         "Point 2: This is the second point.",
         "Point 3: This is the third point.",
     ]
-    c.setFont("Helvetica", 12)  # Set the font and size for the points
+    c.setFont("Helvetica-Bold", 12)  # Set the font and size for the points
     for i, point in enumerate(points):
         line_y = y + height - 50 - (i * 20)
         c.drawString(x + 20, line_y, point)
 
     # Add a string 34 points below the rectangle
     text_below_rect = "This is 34 points below the rectangle."
-    c.setFont("Helvetica", 12)  # Set the font and size for the text
+    c.setFont("Helvetica-Bold", 12)  # Set the font and size for the text
     text_y = y - 184  # Calculate the y position 34 points below the rectangle
     c.drawString(x + 20, text_y, text_below_rect)
 
